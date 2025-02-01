@@ -1,0 +1,132 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Open Banking API",
+    "type": "object",
+    "properties": {
+      "Data": {
+        "type": "object",
+        "properties": {
+          "Accounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "AccountId": { "type": "string" },
+                "IBAN": { "type": "string", "pattern": "^[A-Z]{2}\\d{2}[A-Z0-9]{1,30}$" },
+                "BIC": { "type": "string", "pattern": "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$" },
+                "Currency": { "type": "string", "enum": ["GBP", "USD", "EUR", "INR", "AUD"] },
+                "AccountType": { "type": "string", "enum": ["Personal", "Business"] },
+                "AccountSubType": {
+                  "type": "string",
+                  "enum": ["CurrentAccount", "SavingsAccount", "Loan", "CreditCard"]
+                },
+                "Nickname": { "type": "string" },
+                "Balance": {
+                  "type": "object",
+                  "properties": {
+                    "AvailableAmount": {
+                      "type": "object",
+                      "properties": {
+                        "Currency": { "type": "string" },
+                        "Amount": { "type": "string" }
+                      },
+                      "required": ["Currency", "Amount"]
+                    },
+                    "CreditDebitIndicator": { "type": "string", "enum": ["Credit", "Debit"] }
+                  },
+                  "required": ["AvailableAmount", "CreditDebitIndicator"]
+                },
+                "Transactions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "TransactionId": { "type": "string" },
+                      "BookingDateTime": { "type": "string", "format": "date-time" },
+                      "Amount": {
+                        "type": "object",
+                        "properties": {
+                          "Currency": { "type": "string" },
+                          "Amount": { "type": "string" }
+                        },
+                        "required": ["Currency", "Amount"]
+                      },
+                      "TransactionType": {
+                        "type": "string",
+                        "enum": ["POS", "ATM", "OnlinePayment", "DirectDebit", "StandingOrder", "WireTransfer"]
+                      },
+                      "MerchantDetails": {
+                        "type": "object",
+                        "properties": {
+                          "MerchantName": { "type": "string" },
+                          "MerchantCategoryCode": { "type": "string" }
+                        }
+                      },
+                      "TransactionDescription": { "type": "string" }
+                    },
+                    "required": ["TransactionId", "BookingDateTime", "Amount", "TransactionType"]
+                  }
+                },
+                "DirectDebits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "DirectDebitId": { "type": "string" },
+                      "MandateId": { "type": "string" },
+                      "PayeeName": { "type": "string" },
+                      "Currency": { "type": "string" },
+                      "Amount": { "type": "string" },
+                      "Status": { "type": "string", "enum": ["Active", "Cancelled", "Expired"] },
+                      "NextPaymentDate": { "type": "string", "format": "date" }
+                    },
+                    "required": ["DirectDebitId", "PayeeName", "Currency", "Amount", "Status"]
+                  }
+                },
+                "StandingOrders": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "StandingOrderId": { "type": "string" },
+                      "PayeeAccount": { "type": "string" },
+                      "Currency": { "type": "string" },
+                      "Amount": { "type": "string" },
+                      "Frequency": { "type": "string", "enum": ["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"] },
+                      "NextPaymentDate": { "type": "string", "format": "date" }
+                    },
+                    "required": ["StandingOrderId", "PayeeAccount", "Currency", "Amount", "Frequency"]
+                  }
+                },
+                "Beneficiaries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "BeneficiaryId": { "type": "string" },
+                      "BeneficiaryName": { "type": "string" },
+                      "AccountNumber": { "type": "string" },
+                      "IBAN": { "type": "string" },
+                      "BIC": { "type": "string" }
+                    },
+                    "required": ["BeneficiaryId", "BeneficiaryName", "AccountNumber"]
+                  }
+                }
+              },
+              "required": ["AccountId", "IBAN", "BIC", "Currency", "AccountType", "Balance", "Transactions"]
+            }
+          }
+        },
+        "required": ["Accounts"]
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "TotalPages": { "type": "integer" },
+          "Timestamp": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "required": ["Data", "Meta"]
+  }
+  

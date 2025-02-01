@@ -1,4 +1,5 @@
 import ballerina/http;
+import ballerina/io;
 import OB_mediation_policy_service.org.example as example;
 # A service representing a network-accessible API
 # bound to port `9090`.
@@ -19,9 +20,13 @@ service / on new http:Listener(9090) {
     // + json - JSON payload as a string
     // + schema - JSON schema as a string
     // + return - string VALID if the JSON payload is valid else INVALID
-    resource function post validateJsonSchema(@http:Payload JSONSchemaPayloadValidation data) returns string|error {
-        // Validate the JSON payload against the schema.
-        string isValid = example:JsonSchemaValidator_validateJson(data.jsonSchema,data.jsonString);
+    resource function post validateJsonSchema(http:Request req) returns string|error {
+        string data = check req.getTextPayload();
+
+        // using JSON schema at jsonSchema.json
+        string readJson = check io:fileReadString("jsonSchema.json");
+
+        string isValid = example:JsonSchemaValidator_validateJson(readJson, data);
         return isValid;
     }
 }
