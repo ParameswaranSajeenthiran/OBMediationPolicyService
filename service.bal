@@ -24,7 +24,7 @@ service / on new http:Listener(9090) {
         string data = check req.getTextPayload();
 
         // using JSON schema at jsonSchema.json
-        string readJson = check io:fileReadString("jsonSchema.json");
+        string readJson = check io:fileReadString("schemas/jsonSchema.json");
 
         string isValid = example:JsonSchemaValidator_validateJson(readJson, data);
         return isValid;
